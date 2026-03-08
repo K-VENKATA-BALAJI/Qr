@@ -2,4 +2,6 @@ fastapi
 uvicorn[standard]
 httpx
 playwright
+opencv-python-headless
+python-multipart
 
