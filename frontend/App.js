@@ -2,9 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ActivityIndicator, SafeAreaView, StatusBar, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
 
-// Use your PC's WiFi IPv4 (run ipconfig to check). Change if your IP changes.
-const API_BASE = 'http://192.168.0.105:8000';
+const FALLBACK_API_BASE = 'http://127.0.0.1:8000';
+
+function getApiBase() {
+  if (process.env.EXPO_PUBLIC_API_BASE_URL) {
+    return process.env.EXPO_PUBLIC_API_BASE_URL;
+  }
+
+  const hostUri =
+    Constants.expoConfig?.hostUri ||
+    Constants.manifest2?.extra?.expoGo?.debuggerHost ||
+    Constants.manifest?.debuggerHost;
+
+  if (hostUri) {
+    const host = hostUri.split(':')[0];
+    if (host) {
+      return `http://${host}:8000`;
+    }
+  }
+
+  return FALLBACK_API_BASE;
+}
+
+const API_BASE = getApiBase();
 
 const SCAN_STATE = {
   IDLE: 'IDLE',
